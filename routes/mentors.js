@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 // Replace 'Mentor' with your schema's model name and import it
 const Mentor = require('../models/mentorModel');
+const Interest = require('../models/interestModel');
 const Skill = require('../models/skillModel');
 const School = require('../models/schoolModel');
 const Student = require('../models/studentModel');
@@ -18,6 +19,7 @@ async function getMentorById(req, res, next) {
   try {
     mentor = await Mentor.findById(id)
       .populate('skills')
+      .populate('interests')
       .populate('school')
       .populate('mentees');
     if (!mentor) {
@@ -35,6 +37,7 @@ router.get('/', async (req, res) => {
   try {
     const mentors = await Mentor.find()
       .populate('skills')
+      .populate('interests')
       .populate('school')
       .populate('mentees');
     res.json(mentors);
@@ -50,13 +53,13 @@ router.get('/:id', getMentorById, (req, res) => {
 
 // Creating one Mentor
 router.post('/', async (req, res) => {
-  const { name, email, phone_number, skills, school, mentees } = req.body;
-  const newMentor = new Mentor({ name, email, phone_number, skills, school, mentees });
+  const { name, email, phone_number, skills, interests, school, mentees } = req.body;
+  const newMentor = new Mentor({ name, email, phone_number, skills, interests, school, mentees });
 
   try {
     const savedMentor = await newMentor.save();
     // Populate the referenced fields before sending the response
-    await savedMentor.populate('skills').populate('school').populate('mentees').execPopulate();
+    await savedMentor.populate('skills').populate('interests').populate('school').populate('mentees').execPopulate();
     res.status(201).json(savedMentor);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -65,7 +68,7 @@ router.post('/', async (req, res) => {
 
 // Updating one Mentor
 router.patch('/:id', getMentorById, async (req, res) => {
-  const { name, email, phone_number, skills, school, mentees } = req.body;
+  const { name, email, phone_number, skills, interests, school, mentees } = req.body;
 
   if (name != null) {
     res.mentor.name = name;
@@ -79,6 +82,9 @@ router.patch('/:id', getMentorById, async (req, res) => {
   if (skills != null) {
     res.mentor.skills = skills;
   }
+  if (interests != null) {
+    res.mentor.interests = interests;
+  }
   if (school != null) {
     res.mentor.school = school;
   }
@@ -89,7 +95,7 @@ router.patch('/:id', getMentorById, async (req, res) => {
   try {
     const updatedMentor = await res.mentor.save();
     // Populate the referenced fields before sending the response
-    await updatedMentor.populate('skills').populate('school').populate('mentees').execPopulate();
+    await updatedMentor.populate('skills').populate('interests').populate('school').populate('mentees').execPopulate();
     res.json(updatedMentor);
   } catch (err) {
     res.status(400).json({ message: err.message });

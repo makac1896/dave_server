@@ -10,6 +10,7 @@ const MentorSchema = new Schema({
     name: String,
     email: String,
     phone_number: String,
+    interests: [{ type: Schema.Types.ObjectId, ref: 'Interest' }],
     skills: [{ type: Schema.Types.ObjectId, ref: 'Skill' }],
     school: { type: Schema.Types.ObjectId, ref: 'School' },
     mentees: [{ type: Schema.Types.ObjectId, ref: 'Student' }]
