@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Question = require('./questionModel');
-const Response = require('./responseModel');
+
 
 const WeeklyReportSchema = new Schema({
     popular_questions: [{ type: Schema.Types.ObjectId, ref: 'Question' }],

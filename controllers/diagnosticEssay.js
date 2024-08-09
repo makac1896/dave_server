@@ -7,7 +7,33 @@ const Interest = require("../models/interestModel");
 @desc   This function evaluates a students writing ability and populates their skills, interests and suggested mentors
 */
 const diagnosticEssay = async (
-  student,
+  student= {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone_number": "+1234567890",
+    "skills": [
+        "60d21b4667d0d8992e610c90",
+        "60d21b4667d0d8992e610c91"
+    ],
+    "education_profile": "60d21b4667d0d8992e610c92",
+    "interests": [
+        "60d21b4667d0d8992e610c93",
+        "60d21b4667d0d8992e610c94"
+    ],
+    "schools": [
+        "60d21b4667d0d8992e610c95",
+        "60d21b4667d0d8992e610c96"
+    ],
+    "counselor": "60d21b4667d0d8992e610c97",
+    "mentor": "60d21b4667d0d8992e610c98",
+    "essays": [
+        "60d21b4667d0d8992e610c99",
+        "60d21b4667d0d8992e610c9a"
+    ],
+    "mock_essay": "60d21b4667d0d8992e610c9b",
+    "learning_plan": "60d21b4667d0d8992e610c9c"
+}
+    ,
   essay = {
     title: "My Passion for Renewable Energy",
     body: "Growing up in a rural village in Africa, I have seen firsthand the challenges that come with a lack of reliable electricity. Our village often relies on kerosene lamps for light, which are not only expensive but also harmful to our health and the environment. This experience ignited my passion for renewable energy. I believe that renewable energy sources, such as solar and wind power, can transform our communities by providing clean, affordable, and sustainable electricity. My interest in renewable energy was further fueled by a school project where we built a small solar-powered water pump. Seeing how this simple device could improve irrigation for our crops made me realize the immense potential of renewable energy. I am particularly inspired by the stories of countries that have successfully implemented renewable energy solutions, and I am determined to bring similar advancements to my community. I have been actively participating in science clubs and attending local workshops on renewable energy to deepen my knowledge and skills. My dream is to study engineering with a focus on renewable energy and use my education to develop sustainable energy solutions for rural areas. I am confident that with the right education and resources, I can make a significant impact on my community and help create a cleaner, healthier, and more prosperous future for all.",
@@ -25,59 +51,58 @@ const diagnosticEssay = async (
   student.skills = skills;
   student.interests = interests;
 
-  //Add the new skills to the database
-  for (let i = 0; i < skills.length; i++) {
-    if (!Skill.findOne({ name: skills[i].name })) {
-      const newSkill = new Skill({
-        name: skills[i].name,
-        category: skills[i].category,
-        rating: skills[i].rating,
-      });
+  // Get or create skills and interests, and retrieve their IDs
+  const skillIds = await getOrCreateItems(skills, Skill);
+  const interestIds = await getOrCreateItems(interests, Interest);
 
-      await newSkill
-        .save()
-        .then((skill) => {
-          console.log("New skill added successfully");
-        })
-        .catch((err) => {
-          console.log("Error adding new skill");
-        });
-    }
-  }
-
-  //Add the new interests to the database
-  for (let i = 0; i < interests.length; i++) {
-    if (!Interest.findOne({ name: interests[i].name })) {
-      const newInterest = new Interest({
-        name: interests[i].name,
-        category: interests[i].category,
-        level: interests[i].level,
-      });
-
-      await newInterest
-        .save()
-        .then((interest) => {
-          console.log("New interest added successfully");
-        })
-        .catch((err) => {
-          console.log("Error adding new interest");
-        });
-    }
-  }
-
+  
   //TODO: Find new mentor matches based on new skill and interest analysis
 
   // Update the student profile with the new skills and interests
-  await Student.findByIdAndUpdate(student._id, student, {})
-    .then((student) => {
-      console.log("Student skills and interests updated successfully");
-    })
-    .catch((err) => {
-      console.log("Error updating student skills and interests");
+  // Check if the student already exists by email
+  let existingStudent = await Student.findOne({ email: student.email });
+
+  if (existingStudent) {
+    // Update the existing student profile
+    existingStudent.skills = skillIds;
+    existingStudent.interests = interestIds;
+    // Update other fields as needed
+    await existingStudent.save().then(() => {
+      console.log("Student profile updated successfully");
+    }).catch((err) => {
+      console.error("Error updating student profile", err);
     });
+  } else {
+    // Add a new student profile
+    student.skills = skillIds;
+    student.interests = interestIds;
+    const newStudent = new Student(student);
+    await newStudent.save().then(() => {
+      console.log("New student added successfully");
+    }).catch((err) => {
+      console.error("Error adding new student", err);
+    });
+  }
+  
 
   console.log(skills);
   console.log(interests);
+};
+
+
+// Function to get or create skills and interests, and return their IDs
+const getOrCreateItems = async (items, Model) => {
+  const itemIds = [];
+  for (let i = 0; i < items.length; i++) {
+    let existingItem = await Model.findOne({ name: items[i].name });
+    if (!existingItem) {
+      const newItem = new Model(items[i]);
+      existingItem = await newItem.save();
+      console.log(`New ${Model.modelName.toLowerCase()} added successfully`);
+    }
+    itemIds.push(existingItem._id);
+  }
+  return itemIds;
 };
 
 /*
