@@ -3,6 +3,8 @@ require('dotenv').config()
 const connectDB = require('./config/db')
 const { runPrompt } = require('./apis/openai')
 
+const { matchStudent } = require('./controllers/match')
+
 const { diagnosticEssay } = require('./controllers/diagnosticEssay')
 
 const express = require('express')
@@ -25,10 +27,40 @@ async function main() {
             "feedback": ["60d21b4667d0d8992e610c86", "60d21b4667d0d8992e610c87"],
             "reviewers": ["60d21b4667d0d8992e610c88", "60d21b4667d0d8992e610c89"]
         }
+
+        const student = {
+            "name": "John Doe",
+            "email": "john.doe@example.com",
+            "phone_number": "+1234567890",
+            "skills": [
+                "60d21b4667d0d8992e610c90",
+                "60d21b4667d0d8992e610c91"
+            ],
+            "education_profile": "60d21b4667d0d8992e610c92",
+            "interests": [
+                "60d21b4667d0d8992e610c93",
+                "60d21b4667d0d8992e610c94"
+            ],
+            "schools": [
+                "60d21b4667d0d8992e610c95",
+                "60d21b4667d0d8992e610c96"
+            ],
+            "counselor": "60d21b4667d0d8992e610c97",
+            "mentor": "60d21b4667d0d8992e610c98",
+            "essays": [
+                "60d21b4667d0d8992e610c99",
+                "60d21b4667d0d8992e610c9a"
+            ],
+            "mock_essay": "60d21b4667d0d8992e610c9b",
+            "learning_plan": "60d21b4667d0d8992e610c9c"
+        }
+        
+        // await diagnosticEssay('',sampleEssay);
+
+        //try match students with mentors
+       await matchStudent(student, sampleEssay);
         
 
-        await diagnosticEssay('',sampleEssay);
-        
         // const test = await runPrompt();
         // console.log(test);
         // console.log(test);

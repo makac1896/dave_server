@@ -54,7 +54,7 @@ router.get('/:id', getMentorById, (req, res) => {
 // Creating one Mentor
 router.post('/', async (req, res) => {
   const { name, email, phone_number, skills, interests, school, mentees } = req.body;
-  const newMentor = new Mentor({ name, email, phone_number, skills, interests, school, mentees });
+  const newMentor = new Mentor({ name, email, phone_number, skills, interests, school, mentees: [], activeEssays: 0 });
 
   try {
     const savedMentor = await newMentor.save();

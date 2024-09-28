@@ -17,6 +17,7 @@ const StudentSchema = new Schema({
     name: String,
     email: String,
     phone_number: String,
+    activeEssays: Number,
     skills: [{ type: Schema.Types.ObjectId, ref: 'Skill' }],
     education_profile: { type: Schema.Types.ObjectId, ref: 'EducationProfile' },
     interests: [{ type: Schema.Types.ObjectId, ref: 'Interest' }],

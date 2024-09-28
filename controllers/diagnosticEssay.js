@@ -73,16 +73,20 @@ const diagnosticEssay = async (
       console.error("Error updating student profile", err);
     });
   } else {
-    // Add a new student profile
-    student.skills = skillIds;
-    student.interests = interestIds;
-    const newStudent = new Student(student);
-    await newStudent.save().then(() => {
-      console.log("New student added successfully");
-    }).catch((err) => {
-      console.error("Error adding new student", err);
-    });
+    // Validate that student is an object
+if (typeof student === 'object' && student !== null) {
+  const newStudent = new Student(student);
+  await newStudent.save().then(() => {
+    console.log("New student added successfully");
+  }).catch((err) => {
+    console.error("Error adding new student", err);
+  });
+} else {
+  console.error("Invalid student object:", student);
+}
   }
+
+  
   
 
   console.log(skills);

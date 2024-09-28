@@ -69,7 +69,7 @@ router.get('/:id', getStudentById, (req, res) => {
 // Creating one Student
 router.post('/', async (req, res) => {
   const { name, email, phone_number, skills, education_profile, interests, schools, counselor, mentor, essays, mock_essay, learning_plan } = req.body;
-  const newStudent = new Student({ name, email, phone_number, skills, education_profile, interests, schools, counselor, mentor, essays, mock_essay, learning_plan });
+  const newStudent = new Student({ name, email, phone_number, skills, education_profile, interests, schools, counselor, mentor, essays, mock_essay, learning_plan, activeEssays: 0 });
 
   try {
     const savedStudent = await newStudent.save();

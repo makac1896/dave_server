@@ -1,8 +1,7 @@
 const OpenAI = require("openai");
 
 const openai = new OpenAI({
-  organization: process.env.OPENAI_ORG_KEY,
-  project: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,  // only need the API key
 });
 
 const axios = require("axios");
