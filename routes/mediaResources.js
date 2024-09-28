@@ -41,8 +41,8 @@ router.get('/:id', getMediaResourceById, (req, res) => {
 
 // Creating one MediaResource
 router.post('/', async (req, res) => {
-  const { name, type, description, similar_resources } = req.body;
-  const newMediaResource = new MediaResource({ name, type, description, similar_resources });
+  const { name, type, description, similar_resources, url } = req.body;
+  const newMediaResource = new MediaResource({ name, type, description, similar_resources, url });
 
   try {
     const savedMediaResource = await newMediaResource.save();
@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
 
 // Updating one MediaResource
 router.patch('/:id', getMediaResourceById, async (req, res) => {
-  const { name, type, description, similar_resources } = req.body;
+  const { name, type, description, similar_resources, url } = req.body;
 
   if (name != null) {
     res.mediaResource.name = name;
@@ -69,6 +69,9 @@ router.patch('/:id', getMediaResourceById, async (req, res) => {
   }
   if (similar_resources != null) {
     res.mediaResource.similar_resources = similar_resources;
+  }
+  if (url != null) {
+    res.mediaResource.url = url;
   }
 
   try {

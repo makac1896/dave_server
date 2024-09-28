@@ -5,6 +5,7 @@ const MediaResourceSchema = new Schema({
     name: String,
     type: String,
     description: String,
+    url: String,
     similar_resources: [{ type: Schema.Types.ObjectId, ref: 'MediaResource' }]
 });
 
