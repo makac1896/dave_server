@@ -1,7 +1,7 @@
 const LearningPlan = require("../models/learningPlan");
 const Student = require("../models/student");
 const Mentors = require("../models/mentor");
-const Resource = require("../models/resource");
+const MediaResource = require("../models/MediaResource");
 const Skill = require("../models/skill");
 const mongoose = require("mongoose");
 
@@ -9,12 +9,12 @@ const minScore = 3;
 const maxScore = 5;
 
 const learningPlanGenerator = async (student) => {
-  //Generate a list of existing resources from database
+  //Generate a list of existing MediaResources from database
   const skills = student.skills;
   const interests = student.interests;
 
-  //Search for resources that include this skill in their description
-  const skillResources = Resource.find({
+  //Search for MediaResources that include this skill in their description
+  const skillMediaResources = MediaResource.find({
     $or: [{ description: { $in: skills } }],
   });
 
@@ -26,13 +26,13 @@ const learningPlanGenerator = async (student) => {
   //Evaluate the students past essays for potential areas of improvement
   const writingScore = calculateAverageWritingScore(student.essays);
 
-  //Suggest learning plan based on current writing ability and available resources
+  //Suggest learning plan based on current writing ability and available MediaResources
   if (writingScore < minScore) {
-    //Suggest resources for improving writing skills
-    return skillResources;
+    //Suggest MediaResources for improving writing skills
+    return skillMediaResources;
   } else if (writingScore > minScore && writingScore < maxScore) {
-    //Suggest resources for improving other skills
-    return resources;
+    //Suggest MediaResources for improving other skills
+    return MediaResources;
   }
 
   //Search for mentors who share interests with student

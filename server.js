@@ -26,14 +26,16 @@ async function main() {
  const student = await getRandomStudent();
 //  console.log(student);
 
- if (student && student.essays && student.essays.length > 0) {
-     const sampleEssay = student.essays[0];
-     console.log(sampleEssay);
+console.log(suggestResources(student));
 
-     await matchStudent(student, sampleEssay);
- } else {
-     console.log('No essays found for the selected student.');
- }
+//  if (student && student.essays && student.essays.length > 0) {
+//      const sampleEssay = student.essays[0];
+//      console.log(sampleEssay);
+
+//      await matchStudent(student, sampleEssay);
+//  } else {
+//      console.log('No essays found for the selected student.');
+//  }
 
         
 
@@ -130,9 +132,10 @@ const weeklyReportsRouter = require('./routes/weeklyReports');
 app.use('/weeklyReports', weeklyReportsRouter)
 
 const writingStrategiesRouter = require('./routes/writingStrategies');
+const { suggestResources } = require('./controllers/resourceDissemination')
 app.use('/writingStrategies', writingStrategiesRouter)
 
 
 
 
-app.listen(3000, () => console.log('Server Started'))
+app.listen(3000, () => console.log('Server Started on Port 3000'))

@@ -925,6 +925,21 @@ const updatedStudentsSkillsAndInterests = await Promise.all(
 
 console.log('Skills and interests assigned to students');
 
+
+// Assign 10 random skills and interests to each resource
+const updatedResourceSkillsAndInterests = await Promise.all(
+  mediaResources.map(async resource => {
+    resource.skills = Array.from({ length: 5 }, () => randomElement(skills)._id);
+    resource.interests = Array.from({ length: 5 }, () => randomElement(interests)._id);
+    resource.schools = Array.from({ length: 3 }, () => randomElement(schools)._id);
+    await resource.save();
+    return resource;
+  })
+);
+
+console.log('Skills and interests assigned to resources');
+
+
 // Create learning plans for each student
 const learningPlans = await Promise.all(
   students.map(student => 

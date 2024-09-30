@@ -8,6 +8,8 @@ const MediaResource = require('../models/mediaResourceModel');
 const Mentor = require('../models/mentorModel');
 const Student = require('../models/studentModel');
 const WritingStrategy = require('../models/writingStrategyModel');
+const { getInterestsById } = require('../utils/interests');
+const { getSkillsById } = require('../utils/skills');
 
 // Middleware to get a LearningPlan by ID
 async function getLearningPlanById(req, res, next) {
@@ -54,7 +56,8 @@ router.get('/:id', getLearningPlanById, (req, res) => {
 // Creating one LearningPlan
 router.post('/', async (req, res) => {
   const { student, resources, mentorship_plan, writing_strategies } = req.body;
-  const newLearningPlan = new LearningPlan({ student, resources, mentorship_plan, writing_strategies });
+  let processedResources = resources.map(resource => { return { resource: resource, viewed: false } });
+  const newLearningPlan = new LearningPlan({ student, resources: processedResources, mentorship_plan, writing_strategies });
 
   try {
     const savedLearningPlan = await newLearningPlan.save();
@@ -69,11 +72,13 @@ router.post('/', async (req, res) => {
 // Updating one LearningPlan
 router.patch('/:id', getLearningPlanById, async (req, res) => {
   const { student, resources, mentorship_plan, writing_strategies } = req.body;
+  let processedResources = resources.map(resource => { return { resource: resource, viewed: false } });
+
 
   if (student != null) {
     res.learningPlan.student = student;
   }
-  if (resources != null) {
+  if (processedResources != null) {
     res.learningPlan.resources = resources;
   }
   if (mentorship_plan != null) {
@@ -87,6 +92,17 @@ router.patch('/:id', getLearningPlanById, async (req, res) => {
     const updatedLearningPlan = await res.learningPlan.save();
     // Populate the referenced fields before sending the response
     await updatedLearningPlan.populate('student').populate('resources').populate('mentorship_plan').populate('writing_strategies').execPopulate();
+
+    console.log('Updated learning plan', updatedLearningPlan);
+  
+    let formattedPlan = {
+      mentorship_plan: {
+        interests: updatedLearningPlan.mentorship_plan.interests.map(interest => { return getInterestsById(interest) }),
+        skills: updatedLearningPlan.mentorship_plan.skills.map(skill => { return getSkillsById(skill) }),
+    }
+  };
+
+
     res.json(updatedLearningPlan);
   } catch (err) {
     res.status(400).json({ message: err.message });

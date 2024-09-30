@@ -6,7 +6,10 @@ const MediaResourceSchema = new Schema({
     type: String,
     description: String,
     url: String,
-    similar_resources: [{ type: Schema.Types.ObjectId, ref: 'MediaResource' }]
+    similar_resources: [{ type: Schema.Types.ObjectId, ref: 'MediaResource' }],
+    skills: [{ type: Schema.Types.ObjectId, ref: 'Skill' }],
+    schools: [{ type: Schema.Types.ObjectId, ref: 'School' }],
+    interests: [{ type: Schema.Types.ObjectId, ref: 'Interest' }],
 });
 
 module.exports = mongoose.model('MediaResource', MediaResourceSchema);
