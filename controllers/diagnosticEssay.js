@@ -85,10 +85,6 @@ if (typeof student === 'object' && student !== null) {
   console.error("Invalid student object:", student);
 }
   }
-
-  
-  
-
   console.log(skills);
   console.log(interests);
 };
@@ -128,6 +124,8 @@ const analyseEssaySkills = async (essay) => {
         Identify as many skills as possible within the essay. The essay to be analysed is ${essay.body}`;
   //Return a list of skills
   let skills = await runPrompt(prompt);
+
+  // console.log(skills);
 
   return skills;
 };

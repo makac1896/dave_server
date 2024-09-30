@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const connectDB = require('./config/db')
 const { runPrompt } = require('./apis/openai')
-
+const {getRandomStudent} = require('./utils/student')
 const { matchStudent } = require('./controllers/match')
 
 const { diagnosticEssay } = require('./controllers/diagnosticEssay')
@@ -15,13 +15,6 @@ connectDB();
 
 app.use(express.json())
 
-// Helper function to get a random student
-async function getRandomStudent() {
-    const count = await Student.countDocuments().exec();
-    const random = Math.floor(Math.random() * count);
-    return Student.findOne().skip(random).exec();
-}
-
 //Test openAI API
 async function main() {
     try {
@@ -31,7 +24,7 @@ async function main() {
         // try match students with mentors
  // Get random student
  const student = await getRandomStudent();
- console.log(student);
+//  console.log(student);
 
  if (student && student.essays && student.essays.length > 0) {
      const sampleEssay = student.essays[0];
