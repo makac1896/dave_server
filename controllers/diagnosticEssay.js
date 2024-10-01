@@ -125,6 +125,8 @@ const analyseEssaySkills = async (essay) => {
   //Return a list of skills
   let skills = await runPrompt(prompt);
 
+  // Save the skills to database
+
   // console.log(skills);
 
   return skills;

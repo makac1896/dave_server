@@ -10,6 +10,8 @@ const Student = require('./models/studentModel')
 const express = require('express')
 const app = express()
 
+const {learningPlanGenerator} = require('./controllers/learningPlans')
+
 // Connect to database
 connectDB();
 
@@ -26,7 +28,8 @@ async function main() {
  const student = await getRandomStudent();
 //  console.log(student);
 
-console.log(suggestResources(student));
+// console.log(suggestResources(student));
+console.log(learningPlanGenerator(student));
 
 //  if (student && student.essays && student.essays.length > 0) {
 //      const sampleEssay = student.essays[0];

@@ -3,11 +3,12 @@ const Schema = mongoose.Schema;
 
 const Feedback = require('./feedbackModel');
 const Skill = require('./skillModel');
+const counselorModel = require('./counselorModel');
 
 const ReviewerSchema = new Schema({
     name: String,
     email: String,
-    skills: [{ type: Schema.Types.ObjectId, ref: 'Skill' }]
+    userProfile: { type: Schema.Types.ObjectId, ref: 'User' },
 });
 
 module.exports = mongoose.model('Reviewer', ReviewerSchema);

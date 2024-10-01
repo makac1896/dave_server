@@ -1,7 +1,7 @@
 const MediaResource = require('../models/mediaResourceModel');
 const LearningPlan = require('../models/learningPlanModel');
 
-const suggestResources = async (student)=>{
+const suggestResources = async (student)=> {
     let resources = await MediaResource.find({
         $or: [
             {

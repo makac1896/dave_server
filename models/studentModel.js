@@ -18,6 +18,7 @@ const StudentSchema = new Schema({
     email: String,
     phone_number: String,
     activeEssays: Number,
+    budget: Number,
     skills: [{ type: Schema.Types.ObjectId, ref: 'Skill' }],
     education_profile: { type: Schema.Types.ObjectId, ref: 'EducationProfile' },
     interests: [{ type: Schema.Types.ObjectId, ref: 'Interest' }],
@@ -26,7 +27,17 @@ const StudentSchema = new Schema({
     mentor: { type: Schema.Types.ObjectId, ref: 'Mentor' },
     essays: [{ type: Schema.Types.ObjectId, ref: 'Essay' }],
     mock_essay: { type: Schema.Types.ObjectId, ref: 'MockEssay' },
-    learning_plan: { type: Schema.Types.ObjectId, ref: 'LearningPlan' }
+    learning_plan: { type: Schema.Types.ObjectId, ref: 'LearningPlan' },
+    applications: [
+        {
+            school: { type: Schema.Types.ObjectId, ref: 'School' },
+            status: String,
+            completed: Boolean,
+            dateCompleted: Date,
+            actionItems: [{ type: Schema.Types.ObjectId, ref: 'ActionItem' }],
+            reviewers: [{ type: Schema.Types.ObjectId, ref: 'Reviewer' }],
+        }
+    ]
 });
 
 module.exports = mongoose.model('Student', StudentSchema);

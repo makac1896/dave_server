@@ -1,39 +1,44 @@
-const LearningPlan = require("../models/learningPlan");
-const Student = require("../models/student");
-const Mentors = require("../models/mentor");
-const MediaResource = require("../models/MediaResource");
-const Skill = require("../models/skill");
+const LearningPlan = require("../models/learningPlanModel");
+const Student = require("../models/studentModel");
+const Mentors = require("../models/mentorModel");
+const MediaResource = require("../models/mediaResourceModel");
+const Skill = require("../models/skillModel");
 const mongoose = require("mongoose");
+const {suggestResources} = require("./resourceDissemination");
+const {analyseEssayInterests, analyseEssaySkills} = require("./diagnosticEssay");
+const {matchStudent} = require("./match");
+const {getEssayBodies} = require("../utils/essay");
 
 const minScore = 3;
 const maxScore = 5;
 
 const learningPlanGenerator = async (student) => {
-  //Generate a list of existing MediaResources from database
-  const skills = student.skills;
-  const interests = student.interests;
+   // Get student's mock essay 
+  const mockEssay = student.mock_essay;
 
-  //Search for MediaResources that include this skill in their description
-  const skillMediaResources = MediaResource.find({
-    $or: [{ description: { $in: skills } }],
-  });
+  //TODO: Redo skills and interests analysis to analyse essay first
 
-  //Search for mentors who share skills or interests with student
-  let mentors = await Mentor.find({
-    $or: [{ skills: { $in: skills } }, { interests: { $in: interests } }],
-  });
 
-  //Evaluate the students past essays for potential areas of improvement
-  const writingScore = calculateAverageWritingScore(student.essays);
+  // Find suggested resources and mentors for student based off their profile and save to learning plan
+  await suggestResources(student);
+  await matchStudent(student, mockEssay); 
+
+  // Evaluate the student's past essays for potential areas of improvement
+  const essayObjects = await getEssayBodies(student);
+
+  // console.log(await getEssayById(student.essays[0]));
+  const writingScore = await calculateAverageWritingScore(essayObjects);
+
+  console.log('Writing score:', writingScore);
 
   //Suggest learning plan based on current writing ability and available MediaResources
-  if (writingScore < minScore) {
-    //Suggest MediaResources for improving writing skills
-    return skillMediaResources;
-  } else if (writingScore > minScore && writingScore < maxScore) {
-    //Suggest MediaResources for improving other skills
-    return MediaResources;
-  }
+  // if (writingScore < minScore) {
+  //   //Suggest MediaResources for improving writing skills
+  //   return skillMediaResources;
+  // } else if (writingScore > minScore && writingScore < maxScore) {
+  //   //Suggest MediaResources for improving other skills
+  //   return MediaResources;
+  // }
 
   //Search for mentors who share interests with student
 };
@@ -51,3 +56,5 @@ const calculateAverageWritingScore = async (studentEssays) => {
 
   return averageScore;
 };
+
+module.exports = { learningPlanGenerator };
